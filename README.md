@@ -1,2 +1,0 @@
-# fingergame
-finger
