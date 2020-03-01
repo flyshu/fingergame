@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-row>
+    <el-row :gutter="20">
       <el-col :span="12">
         <div class="grid-content bg-purple">
           <transition name="el-fade-in-linear">
@@ -18,9 +18,8 @@
           <img src="../assets/my_jiandao.png" v-show="showBu==2">
         </div>
         <el-button type="primary" @click="newRound()">再来一次</el-button>
-
       </el-col>
-      <el-col :span="12">
+      <el-col :span="6">
         <div class="grid-content bg-purple-light">
           <el-table
             :data="tableResult"
@@ -53,6 +52,39 @@
           </el-table>
         </div>
       </el-col>
+      <el-col :span="6">
+        <div class="grid-content bg-purple-light">
+          <el-table
+            :data="tableResultCount"
+            height="700"
+            border
+            style="width: 100%">
+            <el-table-column
+              prop="win"
+              label="胜利"
+              width="180">
+              <template slot-scope="scope">
+                <span style="margin-left: 10px">{{ scope.row.win }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="lose"
+              label="失败"
+              width="180">
+              <template slot-scope="scope">
+                <span style="margin-left: 10px">{{ scope.row.lose }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="draw"
+              label="平局">
+              <template slot-scope="scope">
+                <span style="margin-left: 10px">{{ scope.row.draw }}</span>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+      </el-col>
     </el-row>
   </div>
 </template>
@@ -65,11 +97,11 @@
         showBu: 0,
         showMy: [1, 1, 1],
         randIntval: 0,
-        results: [],
         choosed: false,
         resultsArr: [0, 0, 0],
         op: [require("../assets/op_bu.png"), require("../assets/op_chui.png"), require("../assets/op_jiandao.png")],
-        tableResult: []
+        tableResult: [],
+        tableResultCount: [{win: 0, lose: 0, draw: 0}],
       }
     },
     mounted() {
@@ -106,9 +138,11 @@
         let showBu = this.showBu;
         let winOrLose;
         let op = this.op;
-        let resultsArr = this.resultsArr;
+        let resultsArr = this.tableResultCount[0];
         this.showMy = [0, 0, 0];
         this.showMy[index] = 1;
+        console.log(resultsArr);
+
         if (this.randIntval == 0) {
           //
         } else {
@@ -117,15 +151,17 @@
         }
         winOrLose = this.winOrLose(index, showBu);
         if (winOrLose == '平局') {
-          resultsArr[0] += 1;
+          resultsArr.draw += 1;
         } else if (winOrLose == '胜利') {
-          resultsArr[1] += 1;
+          resultsArr.win += 1;
         } else {
-          resultsArr[2] += 1;
+          resultsArr.lose += 1;
         }
         arr = {"my": index, "op": showBu, "re": winOrLose};
-        this.results.push(arr);
-        this.tableResult.push(arr);
+        this.tableResult.unshift(arr);
+        //this.tableResultCount = resultsArr;
+        console.log(resultsArr);
+        
       },
       randBu() {
         let that = this;
